@@ -69,6 +69,9 @@ export type GroundCard = {
   permit: PermitRequirement;
   nextVerifiedSlot: string | null;
   isSample: boolean;
+  latitude: number | null;
+  longitude: number | null;
+  locationIsApproximate: boolean;
 };
 
 export type GroundFilters = {
