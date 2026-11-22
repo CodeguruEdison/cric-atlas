@@ -28,6 +28,9 @@ type GroundRow = {
   state: string;
   cricket_status: CricketStatus;
   is_sample: boolean;
+  latitude: number | null;
+  longitude: number | null;
+  location_is_approximate: boolean;
   permits: { permit_required: boolean | null }[];
 };
 
@@ -35,7 +38,7 @@ export async function listGroundCards(client: PublicClient, now: Date = new Date
   const [grounds, slots] = await Promise.all([
     client
       .from("ground_facilities")
-      .select("id, ground_code, slug, ground_name, municipality, county, state, cricket_status, is_sample, permits(permit_required)")
+      .select("id, ground_code, slug, ground_name, municipality, county, state, cricket_status, is_sample, latitude, longitude, location_is_approximate, permits(permit_required)")
       .order("ground_name"),
     client
       .from("public_availability")
@@ -64,6 +67,9 @@ export async function listGroundCards(client: PublicClient, now: Date = new Date
     permit: permitRequirement(row.permits),
     nextVerifiedSlot: nextSlot.get(row.id) ?? null,
     isSample: row.is_sample,
+    latitude: row.latitude === null ? null : Number(row.latitude),
+    longitude: row.longitude === null ? null : Number(row.longitude),
+    locationIsApproximate: row.location_is_approximate,
   }));
 }
 

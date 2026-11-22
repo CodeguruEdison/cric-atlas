@@ -50,6 +50,7 @@ describe("filterGrounds", () => {
     id: "1", groundCode: "FT-005", slug: "colonial", name: "Colonial Park Cricket Ground",
     municipality: "Franklin Township", county: "Somerset", state: "NJ", cricketStatus: "unverified",
     permit: "required", nextVerifiedSlot: null, isSample: true,
+    latitude: 40.5, longitude: -74.5, locationIsApproximate: true,
   };
   const other: GroundCard = { ...base, id: "2", groundCode: "FT-010", name: "Broadway Field", municipality: "Montgomery Township", permit: "unknown" };
   const all = { query: "", municipality: "all", permit: "all" } as const;

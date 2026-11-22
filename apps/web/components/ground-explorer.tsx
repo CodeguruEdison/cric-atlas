@@ -8,9 +8,16 @@ import {
   permitRequirementLabels,
 } from "@cric-atlas/domain";
 import { ArrowRight, MapPin, Search, X } from "lucide-react";
-import { type ReactNode, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { GroundCard } from "./ground-card";
 import { Hero } from "./hero";
+
+// Leaflet needs the browser, so it loads only on the client.
+const GroundMap = dynamic(() => import("./ground-map").then((module) => module.GroundMap), {
+  ssr: false,
+  loading: () => <div className="h-full animate-pulse bg-slate-200" />,
+});
 
 const FEATURED_COUNT = 8;
 const emptyFilters: GroundFilters = { query: "", municipality: "all", permit: "all" };
@@ -24,11 +31,28 @@ const quickSearches: { label: string; filters: Partial<GroundFilters> }[] = [
 export function GroundExplorer({ grounds, features }: { grounds: Ground[]; features: ReactNode }) {
   const [filters, setFilters] = useState(emptyFilters);
   const [showAll, setShowAll] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [pendingScrollId, setPendingScrollId] = useState<string | null>(null);
   const municipalities = useMemo(() => [...new Set(grounds.map((g) => g.municipality))].sort(), [grounds]);
   const results = useMemo(() => filterGrounds(grounds, filters), [grounds, filters]);
   const isFiltered = filters.query !== "" || filters.municipality !== "all" || filters.permit !== "all";
   const visible = isFiltered || showAll ? results : results.slice(0, FEATURED_COUNT);
   const update = (next: Partial<GroundFilters>) => setFilters((current) => ({ ...current, ...next }));
+  const mapped = useMemo(() => results.filter((g) => g.latitude !== null && g.longitude !== null), [results]);
+  const hasApproximatePins = mapped.some((g) => g.locationIsApproximate);
+  const selectFromMap = useCallback((id: string) => {
+    setActiveId(id);
+    setShowAll(true);
+    setPendingScrollId(id);
+  }, []);
+
+  // Runs after render because the selected card may have just been revealed.
+  useEffect(() => {
+    if (!pendingScrollId) return;
+    document.getElementById(`ground-${pendingScrollId}`)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    setPendingScrollId(null);
+  }, [pendingScrollId]);
+
   const scrollToResults = () => document.getElementById("grounds")?.scrollIntoView({ behavior: "smooth" });
 
   return (
@@ -120,9 +144,23 @@ export function GroundExplorer({ grounds, features }: { grounds: Ground[]; featu
             )}
           </div>
         </div>
+        {mapped.length > 0 && (
+          <div className="mt-6 overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-200">
+            <div className="isolate h-72 sm:h-96"><GroundMap grounds={mapped} activeId={activeId} onSelect={selectFromMap} /></div>
+            {hasApproximatePins && (
+              <p className="flex items-center gap-1.5 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-950">
+                <MapPin aria-hidden className="size-4 shrink-0" /> Pins are approximate. Do not use them for directions.
+              </p>
+            )}
+          </div>
+        )}
         {visible.length > 0 ? (
           <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {visible.map((ground) => <li key={ground.id} className="flex"><GroundCard ground={ground} /></li>)}
+            {visible.map((ground) => (
+              <li key={ground.id} className="flex" onMouseEnter={() => setActiveId(ground.id)} onFocusCapture={() => setActiveId(ground.id)}>
+                <GroundCard ground={ground} highlighted={activeId === ground.id} />
+              </li>
+            ))}
           </ul>
         ) : (
           <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">

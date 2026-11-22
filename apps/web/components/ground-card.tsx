@@ -40,10 +40,10 @@ function Badge({ label, tone, icon: Icon }: { label: string; tone: Tone; icon: L
   );
 }
 
-export function GroundCard({ ground }: { ground: Ground }) {
+export function GroundCard({ ground, highlighted = false }: { ground: Ground; highlighted?: boolean }) {
   const seed = Number(ground.groundCode.slice(-3));
   return (
-    <article className="relative flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-200 transition-shadow focus-within:ring-2 focus-within:ring-action-600 hover:shadow-xl">
+    <article id={`ground-${ground.id}`} data-highlighted={highlighted || undefined} className={`relative flex w-full scroll-mt-4 flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-shadow focus-within:ring-2 focus-within:ring-action-600 hover:shadow-xl ${highlighted ? "ring-3 ring-action-600" : "ring-1 ring-slate-200"}`}>
       <div className="relative h-36">
         <FieldScene seed={seed} />
         {ground.isSample && (
