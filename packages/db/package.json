@@ -1,5 +1,5 @@
 { "name": "@cric-atlas/db", "version": "0.0.0", "private": true, "type": "module",
   "exports": "./src/index.ts",
   "scripts": { "typecheck": "tsc", "test": "vitest run" },
-  "dependencies": { "@supabase/supabase-js": "2.119.2" },
+  "dependencies": { "@cric-atlas/domain": "workspace:*", "@supabase/supabase-js": "2.119.2" },
   "devDependencies": { "@electric-sql/pglite": "0.5.17", "@types/node": "24.10.1", "typescript": "5.9.3", "vitest": "5.1.1" } }
