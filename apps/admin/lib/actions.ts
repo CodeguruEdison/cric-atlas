@@ -8,7 +8,8 @@ import { getResource, type Resource } from "./resources";
 import { createClient } from "./supabase";
 
 const BUCKET = "ground-images";
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+// Vercel rejects function request bodies above 4.5 MB.
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const imageTypes: Record<string, string> = { "image/webp": "webp", "image/jpeg": "jpg", "image/png": "png" };
 
 function resourceOrThrow(key: string): Resource {
