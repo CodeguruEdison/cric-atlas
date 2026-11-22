@@ -51,7 +51,7 @@ export function RecordForm({ resourceKey, id, initial, options, imageUrl }: { re
           ) : (
             <label className="block text-sm font-semibold">Photo file
               <input name="file" type="file" accept="image/webp,image/jpeg,image/png" required aria-invalid={Boolean(errors.file)} className={`${control} py-2`} />
-              <span className="mt-1 block text-xs font-normal text-slate-600">WebP, JPEG or PNG, up to 5 MB.</span>
+              <span className="mt-1 block text-xs font-normal text-slate-600">WebP, JPEG or PNG, up to 4 MB.</span>
               {errors.file && <span className="mt-1 block text-sm font-medium text-red-700">{errors.file}</span>}
             </label>
           )}

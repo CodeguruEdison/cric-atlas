@@ -90,7 +90,7 @@ export const errorMessages = {
   availability_evidence: "A known availability status needs a source, last-checked time and expiry.",
   rule: "This change breaks a data rule. Check the values and try again.",
   forbidden: "You do not have permission to make this change.",
-  upload: "The photo could not be uploaded. Use a WebP, JPEG or PNG under 5 MB.",
+  upload: "The photo could not be uploaded. Use a WebP, JPEG or PNG under 4 MB.",
   generic: "The change could not be saved. Please try again.",
 } as const;
 export type ErrorCode = keyof typeof errorMessages;
