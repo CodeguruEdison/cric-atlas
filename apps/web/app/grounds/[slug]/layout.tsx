@@ -53,7 +53,7 @@ export default async function GroundLayout({ children, params }: Props) {
         <section className="relative isolate overflow-hidden text-white">
           <div className="absolute inset-0 -z-10"><FieldScene seed={Number(ground.ground_code.slice(-3))} /></div>
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-navy-950/90 via-navy-950/70 to-navy-950/40" />
-          <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+          <div className="w-full px-4 py-8 sm:px-6 lg:px-10 2xl:px-16 sm:py-10">
             <Link href="/#grounds" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold hover:underline">
               <ArrowLeft aria-hidden className="size-4" /> All grounds
             </Link>
@@ -66,7 +66,7 @@ export default async function GroundLayout({ children, params }: Props) {
           </div>
         </section>
         <div className="border-b border-slate-200 bg-white">
-          <dl className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 py-4 sm:px-6 lg:grid-cols-4">
+          <dl className="grid w-full grid-cols-2 gap-4 px-4 py-4 sm:px-6 lg:px-10 2xl:px-16 lg:grid-cols-4">
             {summary.map((item) => (
               <div key={item.label}>
                 <dt className="text-xs font-medium text-slate-600">{item.label}</dt>
@@ -76,7 +76,7 @@ export default async function GroundLayout({ children, params }: Props) {
           </dl>
         </div>
         <GroundTabs slug={ground.slug} />
-        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">{children}</div>
+        <div className="w-full px-4 py-6 sm:px-6 lg:px-10 2xl:px-16 sm:py-8">{children}</div>
       </main>
     </>
   );

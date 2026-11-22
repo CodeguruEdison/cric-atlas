@@ -10,7 +10,7 @@ const features = [
 export function FeatureStrip() {
   return (
     <section id="how-it-works" aria-label="How it works" className="scroll-mt-4 border-b border-slate-200 bg-white">
-      <ul className="mx-auto grid max-w-[1480px] gap-6 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:gap-0">
+      <ul className="grid w-full gap-6 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:px-10 2xl:px-16 lg:grid-cols-4 lg:gap-0">
         {features.map(({ icon: Icon, title, text }, index) => (
           <li key={title} className={`flex items-center gap-4 lg:px-6 ${index > 0 ? "lg:border-l lg:border-slate-200" : ""}`}>
             <Icon aria-hidden strokeWidth={1.8} className="size-11 shrink-0 text-pitch-600" />

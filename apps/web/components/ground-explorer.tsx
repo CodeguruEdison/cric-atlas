@@ -111,7 +111,7 @@ export function GroundExplorer({ grounds, features }: { grounds: Ground[]; featu
         </div>
       </Hero>
       {features}
-      <section id="grounds" className="mx-auto max-w-[1480px] scroll-mt-4 px-4 py-10 sm:px-6">
+      <section id="grounds" className="w-full scroll-mt-4 px-4 py-10 sm:px-6 lg:px-10 2xl:px-16">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-3xl font-bold tracking-tight">{isFiltered ? "Search Results" : "Featured Cricket Grounds"}</h2>
@@ -155,7 +155,7 @@ export function GroundExplorer({ grounds, features }: { grounds: Ground[]; featu
           </div>
         )}
         {visible.length > 0 ? (
-          <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <ul className="mt-6 grid gap-5 grid-cols-[repeat(auto-fill,minmax(min(100%,300px),1fr))]">
             {visible.map((ground) => (
               <li key={ground.id} className="flex" onMouseEnter={() => setActiveId(ground.id)} onFocusCapture={() => setActiveId(ground.id)}>
                 <GroundCard ground={ground} highlighted={activeId === ground.id} />

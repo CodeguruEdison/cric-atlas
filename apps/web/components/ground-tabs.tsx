@@ -13,7 +13,7 @@ export function GroundTabs({ slug }: { slug: string }) {
   ];
   return (
     <nav aria-label="Ground sections" className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 sm:px-6">
+      <div className="flex w-full gap-1 overflow-x-auto px-4 sm:px-6 lg:px-10 2xl:px-16">
         {tabs.map((tab) => {
           const active = pathname === tab.href;
           return (
