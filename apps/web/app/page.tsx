@@ -1,18 +1,16 @@
-import { createPublicClient, listGroundCards } from "@cric-atlas/db";
+import { listGroundCards } from "@cric-atlas/db";
 import type { GroundCard } from "@cric-atlas/domain";
 import { FeatureStrip } from "@/components/feature-strip";
 import { GroundExplorer } from "@/components/ground-explorer";
 import { Hero } from "@/components/hero";
 import { SiteHeader } from "@/components/site-header";
+import { publicClient } from "@/lib/supabase";
 
 export const revalidate = 60;
 
 async function loadGrounds(): Promise<GroundCard[] | null> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return null;
   try {
-    return await listGroundCards(createPublicClient(url, key));
+    return await listGroundCards(publicClient());
   } catch (error) {
     console.error(error);
     return null;

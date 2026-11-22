@@ -6,7 +6,8 @@ import {
   type PermitRequirement,
   permitRequirementLabels,
 } from "@cric-atlas/domain";
-import { CalendarDays, CircleCheck, CircleHelp, CircleX, Clock, MapPin, TriangleAlert, type LucideIcon } from "lucide-react";
+import { ArrowRight, CalendarDays, CircleCheck, CircleHelp, CircleX, Clock, MapPin, TriangleAlert, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 import { FieldScene } from "./scenes";
 
 type Tone = "good" | "warn" | "bad" | "unknown";
@@ -42,7 +43,7 @@ function Badge({ label, tone, icon: Icon }: { label: string; tone: Tone; icon: L
 export function GroundCard({ ground }: { ground: Ground }) {
   const seed = Number(ground.groundCode.slice(-3));
   return (
-    <article className="flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-200">
+    <article className="relative flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-200 transition-shadow focus-within:ring-2 focus-within:ring-action-600 hover:shadow-xl">
       <div className="relative h-36">
         <FieldScene seed={seed} />
         {ground.isSample && (
@@ -50,7 +51,9 @@ export function GroundCard({ ground }: { ground: Ground }) {
         )}
       </div>
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="text-lg leading-snug font-bold">{ground.name}</h3>
+        <h3 className="text-lg leading-snug font-bold">
+          <Link href={`/grounds/${ground.slug}`} className="outline-none after:absolute after:inset-0">{ground.name}</Link>
+        </h3>
         <p className="mt-1 flex items-start gap-1.5 text-sm text-slate-700">
           <MapPin aria-hidden className="mt-0.5 size-4 shrink-0 text-action-600" />
           {ground.municipality}, {ground.county} County, {ground.state}
@@ -62,6 +65,7 @@ export function GroundCard({ ground }: { ground: Ground }) {
         <p className="mt-3 flex flex-1 items-end gap-1.5 text-xs text-slate-600">
           <CalendarDays aria-hidden className="size-4 shrink-0" />
           {ground.nextVerifiedSlot ? `Next available: ${formatSlot(ground.nextVerifiedSlot)} ET` : "Availability not yet verified"}
+          <ArrowRight aria-hidden className="ml-auto size-5 shrink-0 text-action-600" />
         </p>
       </div>
     </article>

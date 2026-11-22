@@ -1,12 +1,21 @@
 import { describe, expect, it } from "vitest";
 import {
+  canShowAuthorityContact,
+  currentFees,
+  dayStatus,
   displayValue,
+  easternDateKey,
   effectiveAvailability,
   filterGrounds,
   formatSlot,
+  monthGrid,
   NOT_VERIFIED,
   permitRequirement,
   type GroundCard,
+  type PermitAuthority,
+  type PermitDetail,
+  type PermitFee,
+  verifiedApplicationUrl,
 } from "./index";
 
 describe("displayValue", () => {
@@ -53,4 +62,31 @@ describe("filterGrounds", () => {
 
 describe("formatSlot", () => {
   it("uses Eastern time", () => expect(formatSlot("2026-12-01T14:00:00Z")).toContain("9:00"));
+});
+
+describe("calendar helpers", () => {
+  it("uses the New Jersey day near midnight UTC", () => expect(easternDateKey("2026-12-02T03:00:00Z")).toBe("2026-12-01"));
+  it("pads a month to its first weekday", () => {
+    const grid = monthGrid(2026, 11);
+    expect(grid.slice(0, 3)).toEqual([null, null, "2026-12-01"]);
+    expect(grid.at(-1)).toBe("2026-12-31");
+  });
+  it("defaults an empty day to unknown", () => expect(dayStatus([])).toBe("unknown"));
+  it("prefers an available slot", () =>
+    expect(dayStatus([{ availability_status: "verified_unavailable" }, { availability_status: "verified_available" }])).toBe("verified_available"));
+});
+
+describe("permit trust rules", () => {
+  const authority = { verification_status: "unverified", is_sample: false, application_portal: "https://example.org/p" } as PermitAuthority;
+  const permit = { verification_status: "unverified", application_url: "https://example.org/a", authority } as PermitDetail;
+  it("hides links on unverified permits", () => expect(verifiedApplicationUrl(permit)).toBeNull());
+  it("opens a verified permit link", () =>
+    expect(verifiedApplicationUrl({ ...permit, verification_status: "verified" })).toBe("https://example.org/a"));
+  it("ignores an unverified authority portal", () =>
+    expect(verifiedApplicationUrl({ ...permit, verification_status: "verified", application_url: null })).toBeNull());
+  it("hides unverified real contacts", () => expect(canShowAuthorityContact(authority)).toBe(false));
+  it("drops expired fees", () => {
+    const fee = { effective_until: "2026-01-01", effective_from: null } as PermitFee;
+    expect(currentFees([fee], "2026-11-22")).toEqual([]);
+  });
 });
