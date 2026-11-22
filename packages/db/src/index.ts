@@ -1,4 +1,5 @@
 import {
+  pickPrimaryImage,
   permitRequirement,
   type AvailabilitySlot,
   type CricketStatus,
@@ -18,6 +19,10 @@ export function createPublicClient(url: string, anonKey: string) {
   return createClient(url, anonKey, { auth: { persistSession: false } });
 }
 
+type GroundImageRow = { storage_path: string; alt_text: string; is_primary: boolean; sort_order: number; is_sample: boolean };
+
+export const GROUND_IMAGE_BUCKET = "ground-images";
+
 type GroundRow = {
   id: string;
   ground_code: string;
@@ -32,13 +37,14 @@ type GroundRow = {
   longitude: number | null;
   location_is_approximate: boolean;
   permits: { permit_required: boolean | null }[];
+  ground_images: GroundImageRow[];
 };
 
 export async function listGroundCards(client: PublicClient, now: Date = new Date()): Promise<GroundCard[]> {
   const [grounds, slots] = await Promise.all([
     client
       .from("ground_facilities")
-      .select("id, ground_code, slug, ground_name, municipality, county, state, cricket_status, is_sample, latitude, longitude, location_is_approximate, permits(permit_required)")
+      .select("id, ground_code, slug, ground_name, municipality, county, state, cricket_status, is_sample, latitude, longitude, location_is_approximate, permits(permit_required), ground_images(storage_path, alt_text, is_primary, sort_order, is_sample)")
       .order("ground_name"),
     client
       .from("public_availability")
@@ -55,7 +61,9 @@ export async function listGroundCards(client: PublicClient, now: Date = new Date
     if (!nextSlot.has(slot.ground_id)) nextSlot.set(slot.ground_id, slot.start_datetime);
   }
 
-  return (grounds.data as unknown as GroundRow[]).map((row) => ({
+  return (grounds.data as unknown as GroundRow[]).map((row) => {
+    const image = pickPrimaryImage(row.ground_images);
+    return {
     id: row.id,
     groundCode: row.ground_code,
     slug: row.slug,
@@ -70,7 +78,15 @@ export async function listGroundCards(client: PublicClient, now: Date = new Date
     latitude: row.latitude === null ? null : Number(row.latitude),
     longitude: row.longitude === null ? null : Number(row.longitude),
     locationIsApproximate: row.location_is_approximate,
-  }));
+    image: image
+      ? {
+          url: client.storage.from(GROUND_IMAGE_BUCKET).getPublicUrl(image.storage_path).data.publicUrl,
+          alt: image.alt_text,
+          isSample: image.is_sample,
+        }
+      : null,
+    };
+  });
 }
 
 type SourceLinkRow = { sources: SourceRef | null };

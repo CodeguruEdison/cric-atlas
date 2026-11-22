@@ -64,7 +64,7 @@ export function GroundExplorer({ grounds, features }: { grounds: Ground[]; featu
             event.preventDefault();
             scrollToResults();
           }}
-          className="mx-auto mt-7 grid max-w-4xl gap-2 rounded-2xl bg-white p-2 text-navy-950 shadow-2xl md:grid-cols-[1fr_220px_auto] md:items-center md:rounded-full"
+          className="mx-auto mt-6 grid max-w-[910px] gap-2 rounded-2xl bg-white p-2 text-navy-950 shadow-2xl md:grid-cols-[1fr_220px_auto] md:items-center md:rounded-full"
         >
           <label className="relative block">
             <span className="sr-only">Search grounds</span>
@@ -93,7 +93,7 @@ export function GroundExplorer({ grounds, features }: { grounds: Ground[]; featu
             Search Grounds
           </button>
         </form>
-        <div className="mx-auto mt-4 flex max-w-4xl flex-wrap items-center justify-center gap-2 rounded-2xl bg-navy-950/35 px-3 py-2 backdrop-blur-sm">
+        <div className="mx-auto mt-3 flex max-w-[910px] flex-wrap items-center justify-center gap-2 rounded-2xl bg-navy-950/35 px-3 py-2 backdrop-blur-sm">
           <span className="text-sm font-semibold">Popular Searches:</span>
           {quickSearches.map((chip) => (
             <button
@@ -111,7 +111,7 @@ export function GroundExplorer({ grounds, features }: { grounds: Ground[]; featu
         </div>
       </Hero>
       {features}
-      <section id="grounds" className="mx-auto max-w-7xl scroll-mt-4 px-4 py-10 sm:px-6">
+      <section id="grounds" className="mx-auto max-w-[1480px] scroll-mt-4 px-4 py-10 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-3xl font-bold tracking-tight">{isFiltered ? "Search Results" : "Featured Cricket Grounds"}</h2>

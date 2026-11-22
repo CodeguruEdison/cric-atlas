@@ -11,6 +11,7 @@ import {
   monthGrid,
   NOT_VERIFIED,
   permitRequirement,
+  pickPrimaryImage,
   type GroundCard,
   type PermitAuthority,
   type PermitDetail,
@@ -50,7 +51,7 @@ describe("filterGrounds", () => {
     id: "1", groundCode: "FT-005", slug: "colonial", name: "Colonial Park Cricket Ground",
     municipality: "Franklin Township", county: "Somerset", state: "NJ", cricketStatus: "unverified",
     permit: "required", nextVerifiedSlot: null, isSample: true,
-    latitude: 40.5, longitude: -74.5, locationIsApproximate: true,
+    latitude: 40.5, longitude: -74.5, locationIsApproximate: true, image: null,
   };
   const other: GroundCard = { ...base, id: "2", groundCode: "FT-010", name: "Broadway Field", municipality: "Montgomery Township", permit: "unknown" };
   const all = { query: "", municipality: "all", permit: "all" } as const;
@@ -90,4 +91,12 @@ describe("permit trust rules", () => {
     const fee = { effective_until: "2026-01-01", effective_from: null } as PermitFee;
     expect(currentFees([fee], "2026-11-22")).toEqual([]);
   });
+});
+
+describe("pickPrimaryImage", () => {
+  it("prefers the primary image", () =>
+    expect(pickPrimaryImage([{ is_primary: false, sort_order: 0 }, { is_primary: true, sort_order: 5 }])?.sort_order).toBe(5));
+  it("falls back to sort order", () =>
+    expect(pickPrimaryImage([{ is_primary: false, sort_order: 2 }, { is_primary: false, sort_order: 1 }])?.sort_order).toBe(1));
+  it("returns null with no images", () => expect(pickPrimaryImage([])).toBeNull());
 });

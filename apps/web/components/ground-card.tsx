@@ -1,3 +1,5 @@
+"use client";
+
 import {
   cricketStatusLabels,
   formatSlot,
@@ -7,7 +9,9 @@ import {
   permitRequirementLabels,
 } from "@cric-atlas/domain";
 import { ArrowRight, CalendarDays, CircleCheck, CircleHelp, CircleX, Clock, MapPin, TriangleAlert, type LucideIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { FieldScene } from "./scenes";
 
 type Tone = "good" | "warn" | "bad" | "unknown";
@@ -40,15 +44,38 @@ function Badge({ label, tone, icon: Icon }: { label: string; tone: Tone; icon: L
   );
 }
 
+function GroundPhoto({ ground, seed }: { ground: Ground; seed: number }) {
+  const [failed, setFailed] = useState(false);
+  const image = failed ? null : ground.image;
+  return (
+    <>
+      {image ? (
+        <Image
+          src={image.url}
+          alt={image.alt}
+          fill
+          sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          className="object-cover"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <FieldScene seed={seed} />
+      )}
+      {(ground.isSample || image?.isSample) && (
+        <span className="absolute top-2 right-2 rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-950">
+          {image?.isSample ? "Sample photo" : "Sample"}
+        </span>
+      )}
+    </>
+  );
+}
+
 export function GroundCard({ ground, highlighted = false }: { ground: Ground; highlighted?: boolean }) {
   const seed = Number(ground.groundCode.slice(-3));
   return (
     <article id={`ground-${ground.id}`} data-highlighted={highlighted || undefined} className={`relative flex w-full scroll-mt-4 flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-shadow focus-within:ring-2 focus-within:ring-action-600 hover:shadow-xl ${highlighted ? "ring-3 ring-action-600" : "ring-1 ring-slate-200"}`}>
       <div className="relative h-36">
-        <FieldScene seed={seed} />
-        {ground.isSample && (
-          <span className="absolute top-2 right-2 rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-950">Sample</span>
-        )}
+        <GroundPhoto ground={ground} seed={seed} />
       </div>
       <div className="flex flex-1 flex-col p-4">
         <h3 className="text-lg leading-snug font-bold">

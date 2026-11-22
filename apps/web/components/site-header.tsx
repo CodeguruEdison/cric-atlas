@@ -8,7 +8,7 @@ const links = [
 export function SiteHeader() {
   return (
     <header className="bg-navy-950 text-white">
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-[72px] max-w-[1480px] items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5" aria-label="CricketAtlas GroundIQ home">
           <svg aria-hidden viewBox="0 0 32 32" className="size-10">
             <path d="M22 3l7 7-13 13-6 1 1-6z" fill="#84e11d" />

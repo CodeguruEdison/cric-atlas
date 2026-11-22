@@ -57,6 +57,8 @@ export function permitRequirement(policies: ReadonlyArray<{ permit_required: boo
   return "unknown";
 }
 
+export type GroundImage = { url: string; alt: string; isSample: boolean };
+
 export type GroundCard = {
   id: string;
   groundCode: string;
@@ -72,7 +74,13 @@ export type GroundCard = {
   latitude: number | null;
   longitude: number | null;
   locationIsApproximate: boolean;
+  image: GroundImage | null;
 };
+
+/** The chosen primary image, otherwise the first by sort order. */
+export function pickPrimaryImage<T extends { is_primary: boolean; sort_order: number }>(images: readonly T[]): T | null {
+  return images.find((image) => image.is_primary) ?? [...images].sort((a, b) => a.sort_order - b.sort_order)[0] ?? null;
+}
 
 export type GroundFilters = {
   query: string;

@@ -19,6 +19,12 @@ const supabaseStub = `
     $$ select nullif(current_setting('request.jwt.sub', true), '')::uuid $$;
   grant usage on schema auth to anon, authenticated;
   grant execute on function auth.uid() to anon, authenticated;
+  create schema storage;
+  create table storage.buckets (id text primary key, name text, public boolean, file_size_limit bigint, allowed_mime_types text[]);
+  create table storage.objects (id uuid primary key default gen_random_uuid(), bucket_id text, name text);
+  alter table storage.objects enable row level security;
+  grant usage on schema storage to anon, authenticated;
+  grant select, insert, update, delete on storage.objects to anon, authenticated;
 `;
 
 async function as<T>(role: "anon" | "authenticated", userId: string, sql: string) {
@@ -37,6 +43,7 @@ beforeAll(async () => {
     await db.exec(readFileSync(join(supabaseDir, "migrations", file), "utf8"));
   }
   await db.exec(readFileSync(join(supabaseDir, "seed.sql"), "utf8"));
+  await db.exec(readFileSync(join(supabaseDir, "sample-images.sql"), "utf8"));
   await db.exec(`
     insert into auth.users values ('${adminId}'), ('${otherUserId}');
     insert into public.admin_users (user_id) values ('${adminId}');
@@ -103,6 +110,41 @@ describe("row-level security", () => {
     await expect(
       as("authenticated", otherUserId, `insert into admin_users (user_id) values ('${otherUserId}')`),
     ).rejects.toThrow(/permission denied/);
+  });
+});
+
+describe("ground images", () => {
+  it("gives each sample ground one published sample photo", async () => {
+    const rows = await as("anon", "", "select 1 from ground_images where is_primary and is_sample");
+    expect(rows).toHaveLength(13);
+  });
+
+  it("hides draft images from the public", async () => {
+    await db.exec(`
+      insert into ground_images (ground_id, storage_path, alt_text)
+      select id, 'draft/hidden.webp', 'Draft' from ground_facilities where ground_code = 'FT-001'`);
+    expect(await as("anon", "", "select 1 from ground_images where storage_path = 'draft/hidden.webp'")).toHaveLength(0);
+    expect(await as("authenticated", adminId, "select 1 from ground_images where storage_path = 'draft/hidden.webp'")).toHaveLength(1);
+  });
+
+  it("allows one primary image per ground", async () => {
+    await expect(db.query(`
+      insert into ground_images (ground_id, storage_path, alt_text, is_primary)
+      select id, 'draft/second.webp', 'Second', true from ground_facilities where ground_code = 'FT-001'`)).rejects.toThrow(/unique/);
+  });
+
+  it("blocks public and non-admin writes", async () => {
+    await expect(as("anon", "", "delete from ground_images")).rejects.toThrow(/permission denied/);
+    await as("authenticated", otherUserId, "delete from ground_images");
+    const { rows } = await db.query("select 1 from ground_images where is_sample");
+    expect(rows).toHaveLength(13);
+  });
+
+  it("limits file uploads to admins", async () => {
+    const upload = "insert into storage.objects (bucket_id, name) values ('ground-images', 'x.webp')";
+    await expect(as("anon", "", upload)).rejects.toThrow(/row-level security/);
+    await expect(as("authenticated", otherUserId, upload)).rejects.toThrow(/row-level security/);
+    expect(await as("authenticated", adminId, `${upload} returning name`)).toHaveLength(1);
   });
 });
 
