@@ -1,0 +1,3 @@
+@import "tailwindcss";
+@import "@cric-atlas/ui/theme.css";
+@source "../../../packages/ui/src";

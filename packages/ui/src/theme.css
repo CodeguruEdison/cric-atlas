@@ -1,0 +1,11 @@
+@theme {
+  --color-navy-950: #071a2f;
+  --color-navy-800: #0f3254;
+  --color-pitch-600: #16803c;
+  --color-pitch-400: #84e11d;
+  --color-action-600: #0b4fd0;
+  --color-status-available: #15803d;
+  --color-status-limited: #c2610c;
+  --color-status-unavailable: #b91c1c;
+  --color-status-unknown: #64748b;
+}
