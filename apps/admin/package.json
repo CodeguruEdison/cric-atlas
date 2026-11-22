@@ -1,4 +1,4 @@
 { "name": "@cric-atlas/admin", "version": "0.0.0", "private": true,
-  "scripts": { "dev": "next dev -p 3001", "build": "next build", "start": "next start -p 3001", "typecheck": "tsc" },
-  "dependencies": { "@cric-atlas/db": "workspace:*", "@cric-atlas/domain": "workspace:*", "@cric-atlas/ui": "workspace:*", "next": "16.4.6", "react": "19.3.1", "react-dom": "19.3.1" },
-  "devDependencies": { "@tailwindcss/postcss": "4.3.5", "@types/node": "24.10.1", "@types/react": "19.2.7", "@types/react-dom": "19.2.3", "tailwindcss": "4.3.5", "typescript": "5.9.3" } }
+  "scripts": { "dev": "next dev -p 3001", "build": "next build", "start": "next start -p 3001", "typecheck": "tsc", "test": "vitest run" },
+  "dependencies": { "@cric-atlas/db": "workspace:*", "@cric-atlas/domain": "workspace:*", "@cric-atlas/ui": "workspace:*", "@supabase/ssr": "0.12.7", "@supabase/supabase-js": "2.119.2", "lucide-react": "1.77.0", "next": "16.4.6", "react": "19.3.1", "react-dom": "19.3.1" },
+  "devDependencies": { "@tailwindcss/postcss": "4.3.5", "@types/node": "24.10.1", "@types/react": "19.2.7", "@types/react-dom": "19.2.3", "tailwindcss": "4.3.5", "typescript": "5.9.3", "vitest": "5.1.1" } }
